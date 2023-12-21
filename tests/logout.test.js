@@ -1,18 +1,27 @@
 import { Selector } from 'testcafe';
 
-fixture('Automate Login').page('http://127.0.0.1:5500/');
+fixture('Automate Logout').page('../index.html');
 
-test('Login with valid username and password', async (t) => {
+const username = Selector('#email');
+const password = Selector('#password');
+const loginButton = Selector('input#login');
+const userIcon = Selector('#user');
+const logoutButton = Selector('#logout');
+
+test('Logout with valid username and password', async (t) => {
   await t
-    .typeText(Selector('#email'), 'admin@admin.com')
-    .typeText(Selector('#password'), '2020')
-    .click('#login');
+    // Login with valid credentials
+    .typeText(username, 'admin@admin.com')
+    .typeText(password, '2020')
+    .click(loginButton)
 
-  await t.eval(() => {
-    document.querySelector('.content').style.display = 'flex';
-  });
+    // Check if user logged in
+    .expect(userIcon.visible).ok()
 
-  const contentDisplay = await Selector('.content').getStyleProperty('display');
+    // Execute logout
+    .click(userIcon)
+    .click(logoutButton)
 
-  await t.expect(contentDisplay).eql('flex');
+    // Validate if logout is successful
+    .expect(loginButton.visible).ok();
 });
